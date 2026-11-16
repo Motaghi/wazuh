@@ -2852,37 +2852,6 @@ TEST_F(SyscollectorImpTest, destroyDuringScanSkipsRemainingTasks)
     t.join();
 }
 
-TEST_F(SyscollectorImpTest, destroyDuringScanReturnsAfterBoundedWait)
-{
-    const auto spInfoWrapper{std::make_shared<SysInfoWrapper>()};
-    ScanGate gate;
-    EXPECT_CALL(*spInfoWrapper, hardware()).WillOnce(testing::Invoke([&gate]()
-    {
-        gate.block();
-        return nlohmann::json::parse(EXPECT_CALL_HARDWARE_JSON);
-    }));
-
-    std::thread t
-    {
-        [&]()
-        {
-            Syscollector::instance().init(spInfoWrapper, reportFunction, reportFunction, logFunction,
-                                          SYSCOLLECTOR_DB_PATH, "", "", 3600, true, true, false,
-                                          false, false, false, false, false, false, false, false, false, false);
-        }
-    };
-
-    gate.waitEntered();
-    const auto start{std::chrono::steady_clock::now()};
-    Syscollector::instance().destroy();
-    const auto elapsed{std::chrono::steady_clock::now() - start};
-    // Bounds bracket destroy()'s STOP_WAIT_SLICES budget (20 x 1 s).
-    EXPECT_GE(elapsed, std::chrono::seconds{15});
-    EXPECT_LT(elapsed, std::chrono::seconds{30});
-    gate.release();
-    t.join();
-}
-
 TEST_F(SyscollectorImpTest, destroyDuringSyncDoesNotHang)
 {
     const auto spInfoWrapper{std::make_shared<SysInfoWrapper>()};

@@ -30,6 +30,7 @@ All notable changes to this project will be documented in this file.
 - Fixed `wazuh-logcollector` keeping the leading tab and indentation of the continuation lines of a multi-line `postgresql_log` message. ([#41307](https://github.com/wazuh/wazuh/pull/41307))
 - Fixed high CPU usage of the Linux users and groups inventory on hosts with many accounts. ([#41344](https://github.com/wazuh/wazuh/pull/41344))
 - Fixed the Linux groups inventory reporting no members for groups with a long member list. ([#41344](https://github.com/wazuh/wazuh/pull/41344))
+- Fixed Syscollector logging a false warning when stopped during a long scan. ([#41514](https://github.com/wazuh/wazuh/pull/41514))
 
 ### Other
 
